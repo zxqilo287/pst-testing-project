@@ -1,0 +1,349 @@
+{
+  "info": {
+    "_postman_id": "e17c7ebb-167e-4381-936c-34fad4ac647c",
+    "name": "PST测试项目集",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "57985751"
+  },
+  "item": [
+    {
+      "name": "New Folder",
+      "item": [
+        {
+          "name": "/products",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// ===== 断言部分 =====\r\n// 1. 状态码是200\r\npm.test(\"商品列表返回200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\n// 2. 响应里有data字段，且是数组\r\npm.test(\"响应包含data数组\", function () {\r\n    var jsonData = pm.response.json();\r\n    pm.expect(jsonData).to.have.property(\"data\");\r\n    pm.expect(jsonData.data).to.be.an(\"array\");\r\n});\r\n\r\n// 3. data数组不为空\r\npm.test(\"商品列表不为空\", function () {\r\n    var jsonData = pm.response.json();\r\n    pm.expect(jsonData.data.length).to.be.above(0);\r\n});\r\n\r\n// ===== 变量提取部分 =====\r\n// 自动提取第一个商品的ID，保存到环境变量\r\nvar jsonData = pm.response.json();\r\nif (jsonData.data.length > 0) {\r\n    pm.environment.set(\"product_id\", jsonData.data[0].id);\r\n    console.log(\"商品ID已自动保存:\", jsonData.data[0].id);\r\n}\r\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://api.practicesoftwaretesting.com/products",
+              "protocol": "https",
+              "host": [
+                "api",
+                "practicesoftwaretesting",
+                "com"
+              ],
+              "path": [
+                "products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/favorities/{id}",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://api.practicesoftwaretesting.com/favorites/01M1R5WKDPN0P7BW6NG3HQQ081\n",
+              "protocol": "https",
+              "host": [
+                "api",
+                "practicesoftwaretesting",
+                "com"
+              ],
+              "path": [
+                "favorites",
+                "01M1R5WKDPN0P7BW6NG3HQQ081\n"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/user/login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// 1. 断言状态码是200\r\npm.test(\"登录成功，状态码200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\n// 2. 断言响应里有access_token字段\r\npm.test(\"响应包含access_token\", function () {\r\n    var jsonData = pm.response.json();\r\n    pm.expect(jsonData).to.have.property(\"access_token\");\r\n});\r\n\r\n// 3. 自动提取token并保存到环境变量\r\nvar jsonData = pm.response.json();\r\npm.environment.set(\"token\", jsonData.access_token);\r\n\r\n// 4. 在控制台打印一下，方便确认\r\nconsole.log(\"Token已自动保存:\", jsonData.access_token);\r\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"customer@practicesoftwaretesting.com\",\r\n  \"password\": \"welcome01\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://api.practicesoftwaretesting.com/users/login",
+              "protocol": "https",
+              "host": [
+                "api",
+                "practicesoftwaretesting",
+                "com"
+              ],
+              "path": [
+                "users",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/favoraties",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var jsonData = pm.response.json();\r\nif (jsonData.length > 0) {\r\n    pm.environment.set(\"favorite_id\", jsonData[0].id);\r\n    console.log(\"收藏ID已自动保存:\", jsonData[0].id);\r\n} else {\r\n    console.log(\"收藏列表为空，没有可提取的ID\");\r\n}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://api.practicesoftwaretesting.com/favorites/",
+              "protocol": "https",
+              "host": [
+                "api",
+                "practicesoftwaretesting",
+                "com"
+              ],
+              "path": [
+                "favorites",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "carts/create",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var jsonData = pm.response.json();\r\npm.environment.set(\"cartId\", jsonData.id);\r\nconsole.log(\"购物车ID:\", jsonData.id);\r\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "https://api.practicesoftwaretesting.com/carts",
+              "protocol": "https",
+              "host": [
+                "api",
+                "practicesoftwaretesting",
+                "com"
+              ],
+              "path": [
+                "carts"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "carts/add",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"product_id\": \"{{productId}}\",\r\n  \"quantity\": 2\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://api.practicesoftwaretesting.com/carts/{{cartId}}",
+              "protocol": "https",
+              "host": [
+                "api",
+                "practicesoftwaretesting",
+                "com"
+              ],
+              "path": [
+                "carts",
+                "{{cartId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "carts/{cartId}",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://api.practicesoftwaretesting.com/carts/{{cartId}}",
+              "protocol": "https",
+              "host": [
+                "api",
+                "practicesoftwaretesting",
+                "com"
+              ],
+              "path": [
+                "carts",
+                "{{cartId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "carts/update",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"product_id\": \"{{product_id}}\",\r\n  \"quantity\": 5\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://api.practicesoftwaretesting.com/carts/{{cartId}}/product/quantity",
+              "protocol": "https",
+              "host": [
+                "api",
+                "practicesoftwaretesting",
+                "com"
+              ],
+              "path": [
+                "carts",
+                "{{cartId}}",
+                "product",
+                "quantity"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "carts/delete/(product_id}",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "https://api.practicesoftwaretesting.com/carts/{{cartId}}/product/{{product_id}}",
+              "protocol": "https",
+              "host": [
+                "api",
+                "practicesoftwaretesting",
+                "com"
+              ],
+              "path": [
+                "carts",
+                "{{cartId}}",
+                "product",
+                "{{product_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "carts/delete/{cartId}",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "https://api.practicesoftwaretesting.com/carts/{{cartId}}",
+              "protocol": "https",
+              "host": [
+                "api",
+                "practicesoftwaretesting",
+                "com"
+              ],
+              "path": [
+                "carts",
+                "{{cartId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "New Request",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": ""
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
